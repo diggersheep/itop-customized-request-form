@@ -1,0 +1,20 @@
+{
+  "name": "unistra-itop/customized-request-forms",
+  "description": "",
+  "type": "itop-extension",
+  "autoload": {
+    "psr-4": {
+      "Composer\\Installers\\": "src/Composer/Installers"
+    }
+  },
+  "require": {
+    "gafhyb/itop-installer": "~1.0",
+    "unistra/utils": "~2.0"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://git.unistra.fr/di/itop-extensions.git"
+    }
+  ]
+}

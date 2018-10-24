@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension format="1.0">
+	<extension_code>combodo-customized-request-forms</extension_code>
+	<company>Combodo SARL</company>
+	<author><![CDATA[Pierre]]></author>
+	<label><![CDATA[Customized request forms]]></label>
+	<description><![CDATA[Define personalized request forms based on the service catalog. Add extra fields for a given type of request.]]></description>
+	<version>2.0.12</version>
+	<release_date>2018-06-27</release_date>
+	<version_description><![CDATA[Add DE translation]]></version_description>
+	<itop_version_min>2.3.2</itop_version_min>
+	<status>stable</status>
+	<mandatory>false</mandatory>
+	<more_info_url></more_info_url>
+</extension>
