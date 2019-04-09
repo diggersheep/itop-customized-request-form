@@ -20,7 +20,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with iTop. If not, see <http://www.gnu.org/licenses/>
  */
-Dict::Add('DE DE', 'German', 'Deutsch', array(
+
+Dict::Add('CS CZ', 'Czech', 'Čeština', array(
 	// Dictionary entries go here
 	'Menu:Templates' => 'Templates~~',
 	'Menu:Templates+' => 'Templates for object creation forms~~',

@@ -1,6 +1,5 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL, ITOMIG GmbH
-
 Dict::Add('DE DE', 'German', 'Deutsch', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Request-Vorlagen',
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list+' => '',

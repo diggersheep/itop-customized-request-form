@@ -1,7 +1,6 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL
-
-Dict::Add('ES CR', 'Spanish', 'Español, Castellano', array(
+Dict::Add('ES CR', 'Spanish', 'Español, Castellaño', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Plantillas de Requerimiento',
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list+' => '',
 ));
@@ -10,7 +9,7 @@ Dict::Add('ES CR', 'Spanish', 'Español, Castellano', array(
 // Class: RequestTemplate
 //
 
-Dict::Add('ES CR', 'Spanish', 'Español, Castellano', array(
+Dict::Add('ES CR', 'Spanish', 'Español, Castellaño', array(
 	'Class:RequestTemplate' => 'Plantilla de Requerimiento',
 	'Class:RequestTemplate+' => '',
 	'Class:RequestTemplate/Attribute:service_id' => 'Servicio',

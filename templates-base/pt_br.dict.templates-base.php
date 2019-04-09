@@ -1,6 +1,5 @@
 <?php
 // Copyright (C) 2010-2018 Combodo SARL
-
 Dict::Add('PT BR', 'Brazilian', 'Brazilian', array(
 	// Dictionary entries go here
 	'Menu:Templates' => 'Modelos',

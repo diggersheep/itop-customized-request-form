@@ -16,7 +16,7 @@
 
 SetupWebPage::AddModule(
 	__FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-	'templates-base/3.0.15', array(
+	'templates-base/3.0.17', array(
 		// Identification
 		//
 		'label' => 'Templates foundation',

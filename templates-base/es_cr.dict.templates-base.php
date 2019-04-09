@@ -1,7 +1,6 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL
-
-Dict::Add('ES CR', 'Spanish', 'Español, Castellano', array(
+Dict::Add('ES CR', 'Spanish', 'Español, Castellaño', array(
 	// Dictionary entries go here
 	'Menu:Templates' => 'Plantillas',
 	'Menu:Templates+' => 'Plantillas para la creación de formas de objetos',

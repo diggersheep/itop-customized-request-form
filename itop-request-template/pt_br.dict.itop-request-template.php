@@ -1,6 +1,5 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL
-
 Dict::Add('PT BR', 'Brazilian', 'Brazilian', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Formulário de Solicitação',
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list+' => '',

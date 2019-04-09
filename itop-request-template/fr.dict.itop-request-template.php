@@ -1,6 +1,5 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL
-
 Dict::Add('FR FR', 'French', 'Français', array(
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list' => 'Modèles de requête',
 	'Class:ServiceSubcategory/Attribute:requesttemplates_list+' => '',

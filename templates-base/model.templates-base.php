@@ -351,14 +351,21 @@ abstract class Template extends cmdbAbstractObject
 	}
 
 	/**
-	 * @param $aFieldData Field spec as returned by TemplateField::ToArray()
-	 * @param $value
+	 * Returns an HTML representation of the normalized $value.
+	 *
+	 * Note: Normalized means that date for example must be in SQL format instead of the conf-param format
+	 *
+	 * @param array $aFieldData Field spec as returned by TemplateField::ToArray()
+	 * @param mixed $value The normalized value
+	 *
 	 * @return string
 	 */
 	static public function MakeHTMLValue($aFieldData, $value)
 	{
 		$sRet = $value;
-		switch ($aFieldData['input_type'])
+		$sInputType = $aFieldData['input_type'];
+
+		switch ($sInputType)
 		{
 			case 'drop_down_list':
 			case 'radio_buttons':
@@ -374,6 +381,12 @@ abstract class Template extends cmdbAbstractObject
 				$sRet = htmlentities(AttributeDuration::FormatDuration($value), ENT_QUOTES, 'UTF-8');
 				break;
 
+			case 'date':
+			case 'date_and_time':
+				$sAttDefClass = ($sInputType === 'date') ? 'AttributeDate' : 'AttributeDateTime';
+				$sRet = htmlentities($sAttDefClass::GetFormat()->format($value), ENT_QUOTES, 'UTF-8');
+				break;
+
 			case 'text':
 			default:
 				$sRet = htmlentities($value, ENT_QUOTES, 'UTF-8');
@@ -383,17 +396,30 @@ abstract class Template extends cmdbAbstractObject
 	}
 
 	/**
-	 * @param $aFieldData Field spec as returned by TemplateField::ToArray()
-	 * @param $value
+	 * Returns an HTML representation of the normalized $value.
+	 *
+	 * Note: Normalized means that date for example must be in SQL format instead of the conf-param format
+	 *
+	 * @param array $aFieldData Field spec as returned by TemplateField::ToArray()
+	 * @param mixed $value The normalized value
+	 *
 	 * @return string
 	 */
 	static public function MakePlainTextValue($aFieldData, $value)
 	{
 		$sRet = $value;
-		switch ($aFieldData['input_type'])
+		$sInputType = $aFieldData['input_type'];
+
+		switch ($sInputType)
 		{
 			case 'duration':
 				$sRet = AttributeDuration::FormatDuration($value);
+				break;
+
+			case 'date':
+			case 'date_and_time':
+				$sAttDefClass = ($sInputType === 'date') ? 'AttributeDate' : 'AttributeDateTime';
+				$sRet = $sAttDefClass::GetFormat()->format($value);
 				break;
 		} // switch(input_type)
 		return $sRet;
@@ -1259,8 +1285,6 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 	 */
 	public function GetForTemplate($aValues, $sVerb, $bLocalize = true)
 	{
-		$this->NormalizeValues($aValues);
-
 		$sRet = '';
 		switch ($sVerb)
 		{
@@ -1303,7 +1327,8 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 		$this->oForm = new \Combodo\iTop\Form\Form($sFormId);
 
 		$oField = new Combodo\iTop\Form\Field\HiddenField('legacy');
-		$oField->SetCurrentValue( (int) $this->aValues['legacy']);
+		$iLegacy = isset($this->aValues['legacy']) ? $this->aValues['legacy'] : 0;
+		$oField->SetCurrentValue( (int) $iLegacy);
 		$this->oForm->AddField($oField);
 
 		if ($this->IsLegacyFormat($this->aValues))
@@ -1314,17 +1339,20 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 		{
 			// Keep information that will be necessary when refreshing the form
 			$oField = new Combodo\iTop\Form\Field\HiddenField('extradata_id');
-			$oField->SetCurrentValue($this->aValues['extradata_id']);
+			$iExtraDataId = isset($this->aValues['extradata_id']) ? $this->aValues['extradata_id'] : '';
+			$oField->SetCurrentValue($iExtraDataId);
 			$this->oForm->AddField($oField);
 			$oField = new Combodo\iTop\Form\Field\HiddenField('current_template_id');
-			$oField->SetCurrentValue($this->aValues['current_template_id']);
+			$iCurrentTemplateId = isset($this->aValues['current_template_id']) ? $this->aValues['current_template_id'] : '';
+			$oField->SetCurrentValue($iCurrentTemplateId);
 			$this->oForm->AddField($oField);
 			$oField = new Combodo\iTop\Form\Field\HiddenField('current_template_data');
-			$oField->SetCurrentValue($this->aValues['current_template_data']);
+			$sCurrentTemplateData = isset($this->aValues['current_template_data']) ? $this->aValues['current_template_data'] : '';
+			$oField->SetCurrentValue($sCurrentTemplateData);
 			$this->oForm->AddField($oField);
 
 			$bForceEmptyTemplate = false;
-			if (!$oHostObject->IsNew() && ($this->aValues['current_template_id'] == 0))
+			if (!$oHostObject->IsNew() && ($iCurrentTemplateId == 0))
 			{
 				// The object has been recorded without templates
 				// Keep it as is (make sure that the object could pass the CheckToWrite test), except if a change on the object has an impact on the template
@@ -1357,6 +1385,7 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 			}
 			else
 			{
+				$iTemplateValue = isset($this->aValues['template_id']) ? $this->aValues['template_id'] : 0;
 				if (count($aChoices) == 1)
 				{
 					// There is one single template: auto select this one
@@ -1365,7 +1394,7 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 				}
 				else
 				{
-					$iTemplate = isset($this->aValues['template_id']) ? $this->aValues['template_id'] : 0;
+					$iTemplate = $iTemplateValue;
 					if (!array_key_exists($iTemplate, $aChoices))
 					{
 						$iTemplate = 0;
@@ -1377,10 +1406,10 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 					// No template selected
 					$aTemplateData = null;
 				}
-				elseif ($iTemplate == $this->aValues['current_template_id'])
+				elseif ($iTemplate == $iCurrentTemplateId)
 				{
 					// The user has selected the template that corresponds to the one stored in the DB
-					$aTemplateData = json_decode($this->aValues['current_template_data'], true);
+					$aTemplateData = json_decode($sCurrentTemplateData, true);
 					if (array_key_exists($aTemplateData['id'], $aChoices))
 					{
 						// Make sure that the label is the legacy one
@@ -1549,31 +1578,37 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 
 				// Hidden fields are part of the internal data
 				$aTemplateData = json_decode($aRet['template_data'], true);
-				foreach($aTemplateData['fields'] as $sFieldCode => $aFieldData)
+				if (is_array($aTemplateData['fields']))
 				{
-					switch($aFieldData['input_type'])
+					foreach ($aTemplateData['fields'] as $sFieldCode => $aFieldData)
 					{
-						case 'date':
-							$aRet['user_data'][$sFieldCode] = AttributeDate::GetFormat()->Format($aRet['user_data'][$sFieldCode]);
-							break;
+						switch ($aFieldData['input_type'])
+						{
+							case 'date':
+								$aRet['user_data'][$sFieldCode] = AttributeDate::GetFormat()->Format($aRet['user_data'][$sFieldCode]);
+								break;
 
-						case 'date_and_time':
-							$aRet['user_data'][$sFieldCode] = AttributeDateTime::GetFormat()->Format($aRet['user_data'][$sFieldCode]);
-							break;
+							case 'date_and_time':
+								$aRet['user_data'][$sFieldCode] = AttributeDateTime::GetFormat()->Format($aRet['user_data'][$sFieldCode]);
+								break;
+						}
 					}
 				}
-				foreach ($aTemplateData['hidden_fields'] as $sFieldCode => $foo)
+				if (is_array($aTemplateData['hidden_fields']))
 				{
-					$aFieldData = $aTemplateData['fields'][$sFieldCode];
-					if (Template::IsFieldVisibleToCurrentUser($aTemplateData, $sFieldCode))
+					foreach ($aTemplateData['hidden_fields'] as $sFieldCode => $foo)
 					{
-						// A placeholder is already there (empty string) so that the value will be correctly placed
-						$aRet['user_data'][$sFieldCode] = $aFieldData['initial_value'];
-					}
-					else
-					{
-						// Hide this value
-						unset($aRet['user_data'][$sFieldCode]);
+						$aFieldData = $aTemplateData['fields'][$sFieldCode];
+						if (Template::IsFieldVisibleToCurrentUser($aTemplateData, $sFieldCode))
+						{
+							// A placeholder is already there (empty string) so that the value will be correctly placed
+							$aRet['user_data'][$sFieldCode] = $aFieldData['initial_value'];
+						}
+						else
+						{
+							// Hide this value
+							unset($aRet['user_data'][$sFieldCode]);
+						}
 					}
 				}
 				// Keep track of the current (persistent) values, that may differ from template_id/template_data if the user selects another template (or none)
@@ -1699,11 +1734,18 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 	 * Normalize template values (eg. ExtKey's ID is changed to ExtKey's friendlyname)
 	 *
 	 * @param array $aValues
+	 *
+	 * @throws \ArchivedObjectException
+	 * @throws \CoreException
 	 */
 	public function NormalizeValues(&$aValues = array())
 	{
 		if(!empty($aValues))
 		{
+			if (!isset($aValues['template_data']))
+			{
+				return;
+			}
 			$aTemplateData = json_decode($aValues['template_data'], true);
 
 			// Normalize the structure of aValues
@@ -1721,6 +1763,10 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 				$aValues['user_data_objname'] = array();
 			}
 
+			if (!isset($aValues['user_data']))
+			{
+				return;
+			}
 			foreach ($aValues['user_data'] as $sFieldCode => $value)
 			{
 				if ($aTemplateData['fields'][$sFieldCode]['input_type'] == 'date')
@@ -1805,7 +1851,11 @@ abstract class TemplateFieldsHandler extends CustomFieldsHandler
 
 	public function IsLegacyFormat($aValues)
 	{
-		return ($aValues['legacy']);
+		if (isset($aValues['legacy']))
+		{
+			return ($aValues['legacy']);
+		}
+		return false;
 	}
 
 	/**

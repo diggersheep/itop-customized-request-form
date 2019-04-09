@@ -107,17 +107,6 @@ class RequestTemplateFieldsHandler extends TemplateFieldsHandler
 						{
 							$sDisplayValue = $aValues['user_data_objname'][$sFieldCode];
 						}
-						switch($aTemplateData['fields'][$sFieldCode]['input_type'])
-						{
-							case 'date':
-							$sDisplayValue = AttributeDate::GetFormat()->Format($sDisplayValue);
-							break;
-							
-							case 'date_and_time':
-							$sDisplayValue = AttributeDateTime::GetFormat()->Format($sDisplayValue);
-							break;
-							
-						}
 						$aLines[] = '<b>'.$sLabel.'</b> : '.$sDisplayValue;
 					}
 					$sValuesAsText = '<ul><li>'.implode('</li><li>', $aLines).'</li></ul>';

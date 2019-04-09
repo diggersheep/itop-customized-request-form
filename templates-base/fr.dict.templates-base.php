@@ -1,6 +1,5 @@
 <?php
 // Copyright (C) 2010-2016 Combodo SARL
-
 Dict::Add('FR FR', 'French', 'Français', array(
 	// Dictionary entries go here
 	'Menu:Templates' => 'Modèle',
@@ -37,10 +36,6 @@ Dict::Add('FR FR', 'French', 'Français', array(
 	'Class:TemplateField/Attribute:order+' => 'Position dans le formulaire',
 	'Class:TemplateField/Attribute:mandatory' => 'Obligatoire',
 	'Class:TemplateField/Attribute:mandatory+' => '',
-	'Class:TemplateField/Attribute:mandatory/Value:no' => 'non',
-	'Class:TemplateField/Attribute:mandatory/Value:no+' => '',
-	'Class:TemplateField/Attribute:mandatory/Value:yes' => 'oui',
-	'Class:TemplateField/Attribute:mandatory/Value:yes+' => '',
 	'Class:TemplateField/Attribute:input_type' => 'Type de donnée',
 	'Class:TemplateField/Attribute:input_type+' => '',
 	'Class:TemplateField/Attribute:input_type/Value:text' => 'Texte',
@@ -68,4 +63,3 @@ Dict::Add('FR FR', 'French', 'Français', array(
 	'Class:TemplateField/Attribute:format' => 'Expression régulière',
 	'Class:TemplateField/Attribute:format+' => 'Expression régulière',
 ));
-?>
